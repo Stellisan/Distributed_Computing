@@ -2,11 +2,20 @@
 #include <stdlib.h>
 #include "monitor.h"
 
+/*
+* Group members: 
+* 1. Sanjay Arivazhagan; ASURITE ID: 1217643921; sarivazh@asu.edu 
+* 2. Sethu Manickam; ASURITE ID: 1218452066; smanick4@asu.edu
+*/
+
 monitor_t rw_lock;
 monitor_cond_t r_cond, w_cond;
 
 int  rwc = 0, wc = 0, wwc = 0, rc = 0, global_ID = 0;
 
+/*
+* Wait function - makes reader to wait for the write function
+*/
 void reader_entry()
 {
 	monitor_entry(&rw_lock);
@@ -19,6 +28,9 @@ void reader_entry()
 	monitor_exit(&rw_lock);
 }
 
+/*
+* To signal the writer threads to allow writes to happen.
+*/
 void reader_exit()
 {
 	monitor_entry(&rw_lock);
@@ -31,6 +43,9 @@ void reader_exit()
 	monitor_exit(&rw_lock);
 }
 
+/*
+* Wait function - wait for the reader to complete the printing array values.
+*/
 void writer_entry()
 {
 	monitor_entry(&rw_lock);
@@ -43,6 +58,9 @@ void writer_entry()
         monitor_exit(&rw_lock);
 }
 
+/*
+* Signals the reader thread to continue read operations.
+*/
 void writer_exit()
 {
 	monitor_entry(&rw_lock);
@@ -53,6 +71,9 @@ void writer_exit()
         monitor_exit(&rw_lock);
 }
 
+/*
+* Thread function to increment a[i] by 1.
+*/
 void write_array(int *a)
 {
 	int ID;
@@ -69,25 +90,24 @@ void write_array(int *a)
 
 void main()
 {
-	int a[3] = {0, 0, 0};
-	int idx = 0;
+	int a[3] = {0, 0, 0}; // Initializing array of shared variables
 	
 	init_monitor(&rw_lock);
 	init_monitor_cond(&r_cond);
 	init_monitor_cond(&w_cond);
 
-	start_thread(write_array,a);
-	idx++;
-	start_thread(write_array,a+1);
-	idx++;
-	start_thread(write_array,a+2);
+	start_thread(write_array,a); // Creating thread_1
+	start_thread(write_array,a+1); // Creating thread_2
+	start_thread(write_array,a+2); // Creating thread_3
 
 	printf("\n");
 
 	while(1){
-		reader_entry();
+		reader_entry(); 
+		printf("\nReader Entry");
 		printf("\n\nFrom Main Thread:\na[0] = %d, a[1] = %d, a[2] = %d\n\n",a[0],a[1],a[2]);
 		reader_exit();
+		printf("\nReader Exit");
 		sleep(2);
 	}
 }
