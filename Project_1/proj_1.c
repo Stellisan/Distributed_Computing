@@ -99,7 +99,7 @@ void main()
 	start_thread(write_array,a); // Creating thread_1
 	start_thread(write_array,a+1); // Creating thread_2
 	start_thread(write_array,a+2); // Creating thread_3
-
+	sleep(1);
 	printf("\n");
 
 	while(1){
