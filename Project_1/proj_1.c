@@ -1,93 +1,83 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "monitor.h"
+#include "sem.h"
 
-monitor_t rw_lock;
-monitor_cond_t r_cond, w_cond;
+/*
+* Group members: 
+* 1. Sanjay Arivazhagan; ASURITE ID: 1217643921; sarivazh@asu.edu 
+* 2. Sethu Manickam; ASURITE ID: 1218452066; smanick4@asu.edu
+*/
 
-int  rwc = 0, wc = 0, wwc = 0, rc = 0, global_ID = 0;
+semaphore_t rlock,wlock; // Semaphores for read and write
+int wc = 0; // Count for writing thread
 
-void reader_entry()
+/*
+* Function Name: enter_write
+* Parameters: None
+* Return type: Void
+* Description: Function to lock the critical region of the thread function
+*/
+void enter_write()
 {
-	monitor_entry(&rw_lock);
-	if (wc > 0 || wwc > 0) {
-	    rwc++;
-            monitor_wait(&rw_lock, &r_cond);
-	    rwc--;	
-	}
-	rc++;
-	monitor_exit(&rw_lock);
-}
-
-void reader_exit()
-{
-	monitor_entry(&rw_lock);
-	rc--;
-	while(wwc > 0)
-	{
-		monitor_signal(&rw_lock, &w_cond);
-		wwc--;
-	}
-	monitor_exit(&rw_lock);
-}
-
-void writer_entry()
-{
-	monitor_entry(&rw_lock);
-	if (rc > 0) {
-	    wwc++;
-            monitor_wait(&rw_lock, &w_cond);
-	    wwc--;		
-	}
+	P(&wlock);
 	wc++;
-        monitor_exit(&rw_lock);
+	printf("Thread %d started\t",wc);
 }
 
-void writer_exit()
+/*
+* Function Name: exit_write
+* Parameters: None
+* Return type: Void
+* Description: Checks if all the three threads have completed incrementing
+* the array values and then unlocking the read function in main thread
+*/
+void exit_write()
 {
-	monitor_entry(&rw_lock);
-	wc--;
-	if (wc == 0) {
-		monitor_signal(&rw_lock, &r_cond);
+	printf("Thread %d exiting\n",wc);
+	if(wc == 3)
+	{
+		V(&rlock);
+		wc = 0;
 	}
-        monitor_exit(&rw_lock);
+	V(&wlock);
 }
 
+/*
+* Function Name: write_array
+* Parameters: int *a -- pointer to the array element
+* Return type: Void
+* Description: Thread function to increment the element in the array
+*/
 void write_array(int *a)
 {
 	int ID;
-	monitor_entry(&rw_lock); ID = global_ID++; monitor_exit(&rw_lock);
+
 	while(1){
-		writer_entry();
-		printf("In thread %d	",ID);
-		*a = *a+1;	
-		sleep(1);		
-		writer_exit();
+		enter_write();
+		*a = *a+1;			
+		exit_write();
 		sleep(1);
   	}
 }
 
 void main()
 {
-	int a[3] = {0, 0, 0};
-	int idx = 0;
+	int a[3] = {0, 0, 0}; // Initializing array of shared variables
 	
-	init_monitor(&rw_lock);
-	init_monitor_cond(&r_cond);
-	init_monitor_cond(&w_cond);
+	init_sem(&wlock,1); // Write lock
+	init_sem(&rlock,0); // Read Lock
 
-	start_thread(write_array,a);
-	idx++;
-	start_thread(write_array,a+1);
-	idx++;
-	start_thread(write_array,a+2);
+	start_thread(write_array,a); // Creating thread_1
+	start_thread(write_array,a+1); // Creating thread_2
+	start_thread(write_array,a+2); // Creating thread_3
 
 	printf("\n");
 
 	while(1){
-		reader_entry();
+		P(&rlock);
+		printf("Reader Entry");
 		printf("\n\nFrom Main Thread:\na[0] = %d, a[1] = %d, a[2] = %d\n\n",a[0],a[1],a[2]);
-		reader_exit();
-		sleep(2);
+		printf("Reader Exit\n\n");
 	}
 }
+
