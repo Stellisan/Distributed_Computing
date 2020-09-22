@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "monitor.h"
+#include "sem.h"
 
 /*
 * Group members: 
@@ -8,82 +8,54 @@
 * 2. Sethu Manickam; ASURITE ID: 1218452066; smanick4@asu.edu
 */
 
-monitor_t rw_lock;
-monitor_cond_t r_cond, w_cond;
-
-int  rwc = 0, wc = 0, wwc = 0, rc = 0, global_ID = 0;
+semaphore_t rlock,wlock; // Semaphores for read and write
+int wc = 0; // Count for writing thread
 
 /*
-* Wait function - makes reader to wait for the write function
+* Function Name: enter_write
+* Parameters: None
+* Return type: Void
+* Description: Function to lock the critical region of the thread function
 */
-void reader_entry()
+void enter_write()
 {
-	monitor_entry(&rw_lock);
-	if (wc > 0 || wwc > 0) {
-	    rwc++;
-            monitor_wait(&rw_lock, &r_cond);
-	    rwc--;	
-	}
-	rc++;
-	monitor_exit(&rw_lock);
-}
-
-/*
-* To signal the writer threads to allow writes to happen.
-*/
-void reader_exit()
-{
-	monitor_entry(&rw_lock);
-	rc--;
-	while(wwc > 0)
-	{
-		monitor_signal(&rw_lock, &w_cond);
-		wwc--;
-	}
-	monitor_exit(&rw_lock);
-}
-
-/*
-* Wait function - wait for the reader to complete the printing array values.
-*/
-void writer_entry()
-{
-	monitor_entry(&rw_lock);
-	if (rc > 0) {
-	    wwc++;
-            monitor_wait(&rw_lock, &w_cond);
-	    wwc--;		
-	}
+	P(&wlock);
 	wc++;
-        monitor_exit(&rw_lock);
+	printf("Thread %d started\t",wc);
 }
 
 /*
-* Signals the reader thread to continue read operations.
+* Function Name: exit_write
+* Parameters: None
+* Return type: Void
+* Description: Checks if all the three threads have completed incrementing
+* the array values and then unlocking the read function in main thread
 */
-void writer_exit()
+void exit_write()
 {
-	monitor_entry(&rw_lock);
-	wc--;
-	if (wc == 0) {
-		monitor_signal(&rw_lock, &r_cond);
+	printf("Thread %d exiting\n",wc);
+	if(wc == 3)
+	{
+		V(&rlock);
+		wc = 0;
 	}
-        monitor_exit(&rw_lock);
+	V(&wlock);
 }
 
 /*
-* Thread function to increment a[i] by 1.
+* Function Name: write_array
+* Parameters: int *a -- pointer to the array element
+* Return type: Void
+* Description: Thread function to increment the element in the array
 */
 void write_array(int *a)
 {
 	int ID;
-	monitor_entry(&rw_lock); ID = global_ID++; monitor_exit(&rw_lock);
+
 	while(1){
-		writer_entry();
-		printf("In thread %d	",ID);
-		*a = *a+1;	
-		sleep(1);		
-		writer_exit();
+		enter_write();
+		*a = *a+1;			
+		exit_write();
 		sleep(1);
   	}
 }
@@ -92,22 +64,20 @@ void main()
 {
 	int a[3] = {0, 0, 0}; // Initializing array of shared variables
 	
-	init_monitor(&rw_lock);
-	init_monitor_cond(&r_cond);
-	init_monitor_cond(&w_cond);
+	init_sem(&wlock,1); // Write lock
+	init_sem(&rlock,0); // Read Lock
 
 	start_thread(write_array,a); // Creating thread_1
 	start_thread(write_array,a+1); // Creating thread_2
 	start_thread(write_array,a+2); // Creating thread_3
-	sleep(1);
+
 	printf("\n");
 
 	while(1){
-		reader_entry(); 
-		printf("\nReader Entry");
+		P(&rlock);
+		printf("Reader Entry");
 		printf("\n\nFrom Main Thread:\na[0] = %d, a[1] = %d, a[2] = %d\n\n",a[0],a[1],a[2]);
-		reader_exit();
-		printf("\nReader Exit");
-		sleep(2);
+		printf("Reader Exit\n\n");
 	}
 }
+
