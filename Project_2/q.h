@@ -26,8 +26,6 @@ struct TCB_t* newItem()
 		errno = ENOMEM;
 		return NULL;
 	}
-	new_item->pPrev = new_item;
-	new_item->pNext = new_item;
 	return new_item;
 }
 
@@ -38,14 +36,14 @@ void AddQueue(struct TCB_t **head, struct TCB_t *item)
 	if(*head == NULL)
 	{
 		*head = item;
+		(*head)->pNext = *head;
+		(*head)->pPrev = *head;
 		return;
 	}
-	
 	while(temp->pNext != *head)
 	{
 		temp = temp->pNext;
 	}
-
 	item->pNext = *head;
 	item->pPrev = temp;
 	temp->pNext = item;

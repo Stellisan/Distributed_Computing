@@ -10,7 +10,6 @@ void start_thread(void (*function)(void))
 	TCB_t* item = newItem();
 	if(ReadyQ == NULL)
 		ReadyQ = newQueue();
-
 	init_TCB(item, function, stack, 8192);
 	item->thread_id = ++thread_counter;
 	AddQueue(&ReadyQ, item);
