@@ -11,51 +11,49 @@ struct q_element{
 
 typedef struct q_element q_element;
 
-struct q_element* newQueue()
+struct TCB_t* newQueue()
 {
-	struct q_element *queue = NULL;
+	struct TCB_t *queue = NULL;
 	return queue;
 }
 
-struct q_element* newItem()
+struct TCB_t* newItem()
 {
-	struct q_element *new_item = (struct q_element*)malloc(sizeof(struct q_element));
+	struct TCB_t *new_item = (struct TCB_t*)malloc(sizeof(struct TCB_t));
 	if(new_item == NULL)
 	{
 		printf("Error: Failed to create the q element");
 		errno = ENOMEM;
 		return NULL;
 	}
-	new_item->pPrev = new_item;
-	new_item->pNext = new_item;
 	return new_item;
 }
 
-void AddQueue(struct q_element **head, struct q_element *item)
+void AddQueue(struct TCB_t **head, struct TCB_t *item)
 {
-	struct q_element *temp = *head;
+	struct TCB_t *temp = *head;
 	
 	if(*head == NULL)
 	{
 		*head = item;
+		(*head)->pNext = *head;
+		(*head)->pPrev = *head;
 		return;
 	}
-	
 	while(temp->pNext != *head)
 	{
 		temp = temp->pNext;
 	}
-
 	item->pNext = *head;
 	item->pPrev = temp;
 	temp->pNext = item;
 	(*head)->pPrev = item;
 }
 
-struct q_element* DelQueue(struct q_element **head)
+struct TCB_t* DelQueue(struct TCB_t **head)
 {
-	struct q_element *back = *head;
-	struct q_element *deleted_element = *head;
+	struct TCB_t *back = *head;
+	struct TCB_t *deleted_element = *head;
 
 	if(*head == NULL)
 	{
@@ -83,7 +81,7 @@ struct q_element* DelQueue(struct q_element **head)
 	return deleted_element;
 }
 
-void FreeItem(struct q_element *item)
+void FreeItem(struct TCB_t *item)
 {
 	if(item != NULL)
 	{
