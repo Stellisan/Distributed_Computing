@@ -51,7 +51,7 @@ struct TCB_t* newItem()
 
 /*
 * Function Name: AddQueue
-* Parameters: None
+* Parameters: struct TCB_t **head, struct TCB_t *item
 * Return type: void
 * Description: Function to adds a queue item, pointed to by “item”, to the queue pointed to by head
 */
@@ -78,7 +78,7 @@ void AddQueue(struct TCB_t **head, struct TCB_t *item)
 
 /*
 * Function Name: DelQueue
-* Parameters: None
+* Parameters: struct TCB_t **head
 * Return type: TCB_t*
 * Description: Function to delete an item from head and returns a pointer to the deleted item. If the queue is already empty, flag error
 */
@@ -115,7 +115,7 @@ struct TCB_t* DelQueue(struct TCB_t **head)
 
 /*
 * Function Name: FreeItem
-* Parameters: None
+* Parameters: struct TCB_t *item
 * Return type: void
 * Description: Function to free item
 */
