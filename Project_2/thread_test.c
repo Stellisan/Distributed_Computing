@@ -1,6 +1,12 @@
 #include "threads.h"
 #include <unistd.h>
 
+/*
+* Group members: 
+* 1. Sanjay Arivazhagan; ASURITE ID: 1217643921; sarivazh@asu.edu 
+* 2. Sethu Manickam; ASURITE ID: 1218452066; smanick4@asu.edu
+*/
+
 int global = 0;
 
 void fun1()
