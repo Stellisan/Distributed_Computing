@@ -38,7 +38,7 @@ void add_queue(TCB_t **head, TCB_t *item) {
 }
 
 /*
-* Function Name: add_queue
+* Function Name: delete_queue
 * Parameters: TCB_t **head
 * Return type: TCB_t *
 * Description: Function to delete an element from queue, and return deleted element
