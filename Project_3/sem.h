@@ -11,6 +11,12 @@ typedef struct Semaphore_t {
  	TCB_t *sem_queue;
 } semaphore_t;
 
+/*
+* Function Name: CreateSem
+* Parameters: int InputValue
+* Return type: semaphore_t*
+* Description: Creates the semaphore and initializes the struct and returns it.
+*/
 semaphore_t* CreateSem(int InputValue) {
  	semaphore_t *sem = malloc(sizeof(semaphore_t));
  	sem -> count = InputValue;
@@ -18,6 +24,12 @@ semaphore_t* CreateSem(int InputValue) {
  	return sem;
 }
 
+/*
+* Function Name: P
+* Parameters: semaphore_t * sem
+* Return type: void
+* Description: Decrements count.
+*/
 void P(semaphore_t * sem) {
 	--(sem -> count);
 	if(sem -> count < 0) {
@@ -27,6 +39,12 @@ void P(semaphore_t * sem) {
 	}
 }
 
+/*
+* Function Name: V
+* Parameters: semaphore_t * sem
+* Return type: void
+* Description: Increments count.
+*/
 void V(semaphore_t * sem) {
 	++(sem->count);
 	if(sem -> count <= 0) {
