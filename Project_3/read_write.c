@@ -17,6 +17,11 @@
 semaphore_t *r_sem, *w_sem, *mutex;
 int rwc = 0, wwc = 0, rc = 0, wc = 0, global_ID=0;
 
+/*
+* Function Name: reader_entry
+* Parameters: int ID
+* Return type: void
+*/
 void reader_entry(int ID)
 {
 	printf("[reader: #%d]\ttrying to read\n", ID);
@@ -36,6 +41,11 @@ void reader_entry(int ID)
 	    V(mutex);		// let other processes use the mutex.
 }
 
+/*
+* Function Name: reader_exit
+* Parameters: int ID
+* Return type: void
+*/
 void reader_exit(int ID)
 {
 	P(mutex);
@@ -49,6 +59,11 @@ void reader_exit(int ID)
 
 }
 
+/*
+* Function Name: writer_entry
+* Parameters: int ID
+* Return type: void
+*/
 void writer_entry(int ID)
 {
 	printf("[writer: #%d]\ttrying to write\n", ID);
@@ -67,6 +82,11 @@ void writer_entry(int ID)
 	V(mutex);		// let go of the mutex
 }
 
+/*
+* Function Name: writer_exit
+* Parameters: int ID
+* Return type: void
+*/
 void writer_exit(int ID)
 {
 	P(mutex);
@@ -80,8 +100,11 @@ void writer_exit(int ID)
 	}
 }
 
-
-
+/*
+* Function Name: reader
+* Parameters: No paramteres
+* Return type: void
+*/
 void reader(void)
 { 
   int ID;
@@ -95,6 +118,11 @@ void reader(void)
   };
 }
 
+/*
+* Function Name: writer
+* Parameters: No paramteres
+* Return type: void
+*/
 void writer(void)
 {
   int ID;
@@ -139,7 +167,6 @@ int main() {
     start_thread(reader);
     start_thread(writer);
     start_thread(writer);
-	//Try adding more readers/writers
     run();
     //while (1) {
 	//	sleep(1);
