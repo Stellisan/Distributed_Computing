@@ -7,10 +7,22 @@
 * Used init_TCB() function as given by Dr. Dasgupta in Project 2 Instructions
 */
 
+/*
+* Function Name: init_queue
+* Parameters: TCB_t **head
+* Return type: void
+* Description: Function to return a initialize queue of TCB_t's
+*/
 void init_queue(TCB_t **head) {
 	*head = NULL;
 }
 
+/*
+* Function Name: add_queue
+* Parameters: TCB_t **head, TCB_t *item
+* Return type: void
+* Description: Function to add an element to queue
+*/
 void add_queue(TCB_t **head, TCB_t *item) {
 	if(*head == NULL) {
 		*head = item;
@@ -25,6 +37,12 @@ void add_queue(TCB_t **head, TCB_t *item) {
 	}
 }
 
+/*
+* Function Name: add_queue
+* Parameters: TCB_t **head
+* Return type: TCB_t *
+* Description: Function to delete an element from queue, and return deleted element
+*/
 TCB_t * delete_queue(TCB_t **head) {
 	TCB_t *deleted_element = *head;
 	if((*head) == NULL) {
