@@ -10,7 +10,7 @@
 
 struct TCB_t
 {
-	struct TCB_t *pPrev, *pNext;
+	struct TCB_t *prev, *next;
 	int thread_id;
 	ucontext_t context;
 };
