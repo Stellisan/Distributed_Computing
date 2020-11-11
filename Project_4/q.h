@@ -1,10 +1,11 @@
+#define GNU_SOURCE
+#include <unistd.h>
 #include "TCB.h"
 
 /*
 * Group members: 
 * 1. Sanjay Arivazhagan; ASURITE ID: 1217643921; sarivazh@asu.edu 
 * 2. Sethu Manickam; ASURITE ID: 1218452066; smanick4@asu.edu
-* Used init_TCB() function as given by Dr. Dasgupta in Project 2 Instructions
 */
 
 /*

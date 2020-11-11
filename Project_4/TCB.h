@@ -1,3 +1,5 @@
+#define GNU_SOURCE
+#include <unistd.h>
 #include <ucontext.h> 
 #include <string.h>
 

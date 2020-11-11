@@ -1,3 +1,7 @@
+#define GNU_SOURCE
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "q.h"
 
 /*
@@ -46,5 +50,5 @@ void yield() {
   	this_thread = delete_queue(&ready_queue);
   	add_queue(&ready_queue, this_thread);
   	swapcontext(&(this_thread -> context), &(ready_queue -> context));
-	printf ("\nAfter yield(), thread ID:\t%d\n", this_thread -> thread_id);
+	printf("\nAfter yield(), thread ID:\t%d\n", this_thread -> thread_id);
 }
