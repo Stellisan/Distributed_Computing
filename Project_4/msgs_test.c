@@ -37,7 +37,7 @@ void server_side() {
 
 		printf ("\nAt Server No. : %d -> Replying to Client ID: %d\n", id, msg[0]);
 		Send(&port_arr[msg[0]], msg);
-		printf ("Message sent from Server to Client!\n MESSAGE \t");
+		printf ("Message sent from Server to Client!\n");
 
 		printf("\n-----------------------------------------------------------------------------------\n\n");
 
